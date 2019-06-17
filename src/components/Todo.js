@@ -1,11 +1,13 @@
-import React, {useState, useEffect, useReducer} from 'react'
+import React, {useState, useEffect, useReducer, useRef} from 'react'
 import axios from 'axios'
 
 const Todo = props => {
 
-    const [todoName, setTodoName] = useState('')
+    // const [todoName, setTodoName] = useState('')
     // const [submittedTodo, setSubmittedTodo] = useState(null)
     // const [todoList, setTodoList] = useState([])
+
+    const todoInputRef = useRef()
 
     const todoListReducer = (state, action) => {
         switch(action.type) {
@@ -20,6 +22,7 @@ const Todo = props => {
         }
     }
     const [todoList, dispatch] = useReducer(todoListReducer, [])
+
 
 
     useEffect(() => {
@@ -42,7 +45,7 @@ const Todo = props => {
     //Empty array for second arguement is to run it like ComponentDidMount
     //If a variable is put in, it will run when that changes, such as the todoName state
 
-    [todoName])
+    [])
 
     // useEffect( 
     //     () => {
@@ -66,12 +69,22 @@ const Todo = props => {
         }
     }, [])
 
-    const inputChangeHandler = (e) => {
-        setTodoName(e.target.value)
-    }
+    // const inputChangeHandler = (e) => {
+    //     setTodoName(e.target.value)
+    // }
+
+    // const inputChangeHandler = e => {
+    //     setTodoState({
+    //         userInput: e.target.value,
+    //         todoList: todoState.todoList
+    //     })
+    //     setTodoName(e.target.value)
+    // }
     
 
     const todoAddHandler = () => {
+
+        const todoName = todoInputRef.current.value;
         
         axios.post('https://todohooks-3c2bf.firebaseio.com/todos.json', {name: todoName})
         .then(res => {
@@ -98,7 +111,7 @@ const Todo = props => {
 
     return (
         <React.Fragment>
-            <input type = 'text' placeholder = "Todo" onChange = {inputChangeHandler} value = {todoName}/>
+            <input type = 'text' placeholder = "Todo" ref = {todoInputRef}/>
             <button type = 'button' onClick = {todoAddHandler} >Add</button>
             <ul> 
                 {todoList.map((todo, i) => (
