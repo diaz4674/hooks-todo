@@ -1,9 +1,9 @@
-import React, {useState, useEffect, useReducer, useRef} from 'react'
+import React, {useState, useEffect, useReducer, useRef, useMemo} from 'react'
 import axios from 'axios'
 import List from './List'
 
 const Todo = props => {
-
+    const [inputIsValid, setInputIsValid] = useState(false)
     // const [todoName, setTodoName] = useState('')
     // const [submittedTodo, setSubmittedTodo] = useState(null)
     // const [todoList, setTodoList] = useState([])
@@ -60,15 +60,21 @@ const Todo = props => {
         console.log(e.clientX, e.clientY)
     }
 
+const inputValidatoinHandler = e => {
+    if(e.target.value.trim() === ''){
+        setInputIsValid(false)
+    } else {
+        setInputIsValid(true)
+    }
+}
 
 
-
-    useEffect(() => {
-        document.addEventListener('mousemove', mouseMoveHandler)
-        return () => {
-            document.removeEventListener('mousemove', mouseMoveHandler)
-        }
-    }, [])
+    // useEffect(() => {
+    //     document.addEventListener('mousemove', mouseMoveHandler)
+    //     return () => {
+    //         document.removeEventListener('mousemove', mouseMoveHandler)
+    //     }
+    // }, [])
 
     // const inputChangeHandler = (e) => {
     //     setTodoName(e.target.value)
@@ -112,9 +118,17 @@ const Todo = props => {
 
     return (
         <React.Fragment>
-            <input type = 'text' placeholder = "Todo" ref = {todoInputRef}/>
+            <input type = 'text' 
+            placeholder = "Todo" 
+            ref = {todoInputRef} 
+            onChange = {inputValidatoinHandler}
+            style = {{backgroundColor: inputIsValid ?  'transparent' : 'red'}}
+            />
             <button type = 'button' onClick = {todoAddHandler} >Add</button>
-            <List items = {todoList} onClick = {todoRemoveHandler} />
+           { useMemo(() => 
+            <List items = {todoList} onClick = {todoRemoveHandler} />,
+            //second argument is for react to watch out for to see if it gets changed, so it reruns this memo'd component
+             [todoList] ) }
         </React.Fragment>
     )
 }
